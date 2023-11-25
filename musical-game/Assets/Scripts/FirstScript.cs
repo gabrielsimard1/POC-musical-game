@@ -6,7 +6,7 @@ public class FirstScript : MonoBehaviour
 {
     void Start()
     {
-        Debug.Log("Coucou");
+        Debug.Log("Coucou!!");
     }
 
     void Update()
