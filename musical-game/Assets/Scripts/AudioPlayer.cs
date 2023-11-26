@@ -6,7 +6,6 @@ public class AudioPlayer : MonoBehaviour
 {
     [SerializeField] List<ListWrapper> audioLayers; // List of Audiosources and their variants. Bass/drums needs to always be unique 
 
-    // private with getter?
     [SerializeField] float beatsPerMinute;
 
     [SerializeField] float fadeDuration = 1;

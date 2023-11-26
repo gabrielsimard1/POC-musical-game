@@ -1,41 +1,71 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+public enum BeatLength
+{
+    WholeNote,
+    HalfNote,
+    QuarterNote,
+    EighthNote,
+    Triplet
+}
+
+public static class BeatLengthValues
+{
+    public const float WholeNote = 4f;
+    public const float HalfNote = 2f;
+    public const float QuarterNote = 1f;
+    public const float EighthNote = 0.5f;
+    public const float Triplet = 0.333f;
+}
+
 public class BlinkingPlatform : MonoBehaviour
 {
-    TilemapRenderer tilemapRenderer;
-    Collider2D platformCollider;
-    AudioPlayer audioPlayer;
+    BeatManager beatManager;
+    float blinkDelay;
+    [SerializeField] BeatLength selectedBeatLength;
 
-    [SerializeField]
+    TilemapRenderer tilemapRenderer;
+    TilemapCollider2D tilemapCollider;
 
     void Awake()
     {
-        audioPlayer = FindObjectOfType<AudioPlayer>();
         tilemapRenderer = GetComponent<TilemapRenderer>();
-        platformCollider = GetComponent<Collider2D>();
+        tilemapCollider = GetComponent<TilemapCollider2D>();
+        beatManager = FindObjectOfType<BeatManager>();
     }
 
     void Start()
     {
-        float intervalInSeconds = 60f / audioPlayer.GetBeatsPerMinute();
-        StartCoroutine(Blink(intervalInSeconds));
+        GetBlinkDelay();
+        StartCoroutine(Blink());
     }
 
-    IEnumerator Blink(float interval)
+    void GetBlinkDelay()
+    {
+        string enumName = Enum.GetName(typeof(BeatLength), selectedBeatLength);
+        if (enumName != null)
+        {
+            float beatLengthValue = (float)typeof(BeatLengthValues).GetField(enumName).GetValue(null);
+            blinkDelay = beatLengthValue * beatManager.GetQuarterNoteDuration();
+        }
+    }
+
+    IEnumerator Blink()
     {
         while (true)
         {
-            yield return new WaitForSeconds(interval);
             ToggleVisibilityAndCollision();
+            yield return new WaitForSecondsRealtime(blinkDelay);
         }
     }
 
     void ToggleVisibilityAndCollision()
     {
         tilemapRenderer.enabled = !tilemapRenderer.enabled;
-        platformCollider.enabled = !platformCollider.enabled;
+        tilemapCollider.enabled = !tilemapCollider.enabled;
     }
 }
