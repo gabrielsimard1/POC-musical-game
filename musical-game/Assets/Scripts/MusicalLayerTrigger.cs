@@ -21,10 +21,8 @@ public class MusicalLayerTrigger : MonoBehaviour
     // at some point if we want to put horizontal triggers we might need to add a [SerializeField] bool to specify so and then we can adjust the logic (checking the velocity.y instead of x)
     private void OnTriggerExit2D(Collider2D collision)
     { 
-        //get player moving direction with its velocity so we need to access its rigidbody2d
         if (gameObject.tag.Contains(LAYER_TRIGGER_PREFIX) && collision.CompareTag("Player"))
         {
-            //get player moving direction with its velocity so we need to access its rigidbody2d
             Rigidbody2D playersRigidBody = collision.GetComponent<Rigidbody2D>();
             Vector2 playersVelocity = playersRigidBody.velocity;
             (int layerIndex, int layerVariant) extractedIndexes = ExtractIndexes(gameObject.tag);
@@ -49,7 +47,7 @@ public class MusicalLayerTrigger : MonoBehaviour
 
     private (int layerIndex, int layerVariant) ExtractIndexes(string layerName)
     {
-        // Assuming the format is "LayerTriggerXX-YY" with a fixed length of 14 characters
+        // Assuming the format is "LayerTriggerXX-YY" with a fixed length of 17 characters
         string numericPart = layerName.Substring(12, 2);  // Extract "XX"
         string variantPart = layerName.Substring(15, 2);  // Extract "YY"
 
