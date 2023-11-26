@@ -4,50 +4,22 @@ using UnityEngine;
 
 public class AudioPlayer : MonoBehaviour
 {
-
-    [SerializeField] AudioSource firstLayer;
-    [SerializeField] bool isOnFirstLayer;
-
-    [SerializeField] AudioSource secondLayer;
-    [SerializeField] bool isOnSecondLayer;
-
-    [SerializeField] AudioSource thirdLayer;
-    [SerializeField] bool isOnthirdLayer;
+    [SerializeField] List<ListWrapper> audioLayers; // List of Audiosources and their variants. Bass/drums needs to always be unique 
 
     [SerializeField] float fadeDuration = 1;
     [SerializeField] float targetVolume = .25f;
 
-    public bool isFading = false;
+    GameSession gameSession;
 
-
-
-    void Start()
+    private void Awake()
     {
-        
+        gameSession = FindObjectOfType<GameSession>();
     }
 
-    void Update()
-    {
-        if (isOnSecondLayer && !isFading)
-        {
-            Debug.Log("Entering coroutine for second layer");
-            StartCoroutine(FadeVolume(secondLayer, secondLayer.volume, targetVolume));
-        }
-
-        if (isOnthirdLayer && !isFading)
-        {
-            StartCoroutine(FadeVolume(thirdLayer, thirdLayer.volume, targetVolume));
-        }
-
-
-        //fade out
-        //StartCoroutine(FadeVolume(secondLayer, secondLayer.volume, 0));
-    }
 
     IEnumerator FadeVolume(AudioSource audioSource, float startVolume, float endVolume)
     {
         float elapsedTime = 0f;
-        isFading = true;
 
         while (elapsedTime < fadeDuration)
         {
@@ -57,8 +29,26 @@ public class AudioPlayer : MonoBehaviour
         }
 
         audioSource.volume = endVolume;
-        Debug.Log("Setting isfading false");
-        isFading = false;
-
     }
+
+    public void AddLayer(int layerVariant)
+    {
+        int playerZone = gameSession.GetCurrentPlayerZone();
+        AudioSource audioLayer = audioLayers[playerZone + 1].variants[layerVariant];
+        StartCoroutine(FadeVolume(audioLayer, audioLayer.volume, targetVolume));
+    }
+
+    public void RemoveLayer(int layerVariant)
+    {
+        int playerZone = gameSession.GetCurrentPlayerZone();
+        AudioSource audioLayer = audioLayers[playerZone].variants[layerVariant];
+        StartCoroutine(FadeVolume(audioLayer, audioLayer.volume, 0));
+       
+    }
+}
+
+[System.Serializable]
+public class ListWrapper
+{
+    public List<AudioSource> variants;
 }
