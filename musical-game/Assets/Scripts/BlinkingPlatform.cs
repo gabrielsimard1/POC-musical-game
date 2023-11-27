@@ -4,30 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum BeatLength
-{
-    WholeNote,
-    HalfNote,
-    QuarterNote,
-    EighthNote,
-    Triplet
-}
-
-public static class BeatLengthValues
-{
-    public const float WholeNote = 4f;
-    public const float HalfNote = 2f;
-    public const float QuarterNote = 1f;
-    public const float EighthNote = 0.5f;
-    public const float Triplet = 0.333f;
-}
-
 public class BlinkingPlatform : MonoBehaviour
 {
-    BeatManager beatManager;
-    float blinkDelay;
-    [SerializeField] BeatLength selectedBeatLength;
+    float intervalLength = 0;
 
+    [Header("Delay")]
+    [SerializeField] bool hasDelay;
+
+    [Header("Skipping Beats")]
+    [SerializeField] bool isSkippingBeats;
+    [SerializeField] float skippingBeatsCount = 0;
+    float skippingBeatsCountAcc = 0;
+
+
+    Material tilemapMaterial;
     TilemapRenderer tilemapRenderer;
     TilemapCollider2D tilemapCollider;
 
@@ -35,37 +25,54 @@ public class BlinkingPlatform : MonoBehaviour
     {
         tilemapRenderer = GetComponent<TilemapRenderer>();
         tilemapCollider = GetComponent<TilemapCollider2D>();
-        beatManager = FindObjectOfType<BeatManager>();
+
+        tilemapMaterial = new Material(tilemapRenderer.material);
+        tilemapRenderer.material = tilemapMaterial;
     }
 
     void Start()
     {
-        GetBlinkDelay();
-        StartCoroutine(Blink());
-    }
-
-    void GetBlinkDelay()
-    {
-        string enumName = Enum.GetName(typeof(BeatLength), selectedBeatLength);
-        if (enumName != null)
+        if (hasDelay)
         {
-            float beatLengthValue = (float)typeof(BeatLengthValues).GetField(enumName).GetValue(null);
-            blinkDelay = beatLengthValue * beatManager.GetQuarterNoteDuration();
+            tilemapRenderer.enabled = false;
+            tilemapCollider.enabled = false;
         }
     }
 
-    IEnumerator Blink()
+    public IEnumerator ToggleOpacity(float intervalLength)
     {
-        while (true)
+        float startTime = Time.time;
+        float startAlpha = 1;
+
+        while (Time.time - startTime < intervalLength)
         {
-            ToggleVisibilityAndCollision();
-            yield return new WaitForSecondsRealtime(blinkDelay);
+            float normalizedTime = (Time.time - startTime) / intervalLength;
+            Color newColor = tilemapMaterial.color;
+            newColor.a = Mathf.Lerp(startAlpha, 0, normalizedTime);
+            tilemapMaterial.color = newColor;
+
+            yield return new WaitForEndOfFrame();
         }
     }
 
-    void ToggleVisibilityAndCollision()
+    public void ToggleVisibilityAndCollision(float intervalLengthParam)
     {
-        tilemapRenderer.enabled = !tilemapRenderer.enabled;
-        tilemapCollider.enabled = !tilemapCollider.enabled;
+        if (intervalLength == 0)
+            intervalLength = intervalLengthParam;
+        if (!isSkippingBeats || 
+            (isSkippingBeats && skippingBeatsCountAcc == skippingBeatsCount - 1))
+        {
+            tilemapRenderer.enabled = !tilemapRenderer.enabled;
+            tilemapCollider.enabled = !tilemapCollider.enabled;
+
+            if (tilemapRenderer.enabled)
+                //StartCoroutine(ToggleOpacity(intervalLength));
+
+            skippingBeatsCountAcc = 0;
+        }
+        else if(isSkippingBeats)
+        {
+            skippingBeatsCountAcc++;
+        }
     }
 }

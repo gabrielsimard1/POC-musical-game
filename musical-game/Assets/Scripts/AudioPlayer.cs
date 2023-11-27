@@ -23,6 +23,11 @@ public class AudioPlayer : MonoBehaviour
         return beatsPerMinute;
     }
 
+    public AudioSource GetFirstLayer()
+    {
+        return audioLayers[0].variants[0];
+    }
+
 
     IEnumerator FadeVolume(AudioSource audioSource, float startVolume, float endVolume)
     {
