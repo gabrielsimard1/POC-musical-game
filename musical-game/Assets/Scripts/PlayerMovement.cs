@@ -9,17 +9,14 @@ public class PlayerMovement : MonoBehaviour
     Vector2 rawInput;
     Rigidbody2D myRigidbody;
 
+    [SerializeField] BoxCollider2D feetCollider;
+
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float jumpSpeed = 5f;
 
     void Awake()
     {
         myRigidbody = GetComponent<Rigidbody2D>();
-    }
-
-    void Start()
-    {
-        
     }
 
     void Update()
@@ -40,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
-        if (!myRigidbody.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (!feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
             return;
         if (value.isPressed)
         {
