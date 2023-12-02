@@ -13,14 +13,18 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float jumpSpeed = 5f;
+    Animator animator;
+    bool playerHasHorizontalSpeed;
 
     void Awake()
     {
         myRigidbody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
+        playerHasHorizontalSpeed = Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
         Move();
     }
 
@@ -28,6 +32,9 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 playerVelocity = new(rawInput.x * moveSpeed, myRigidbody.velocity.y);
         myRigidbody.velocity = playerVelocity;
+        bool playerHasHorizontalSpeed = DoesPlayerHaveHorizontalSpeed();
+        animator.SetBool("isWalking", playerHasHorizontalSpeed);
+        FlipSprite(playerHasHorizontalSpeed);
     }
 
     void OnMove(InputValue value)
@@ -43,5 +50,18 @@ public class PlayerMovement : MonoBehaviour
         {
             myRigidbody.velocity += new Vector2(0f, jumpSpeed);
         }
+    }
+
+    void FlipSprite(bool hasHorizontalSpeed)
+    {
+        if (hasHorizontalSpeed)
+        {
+            transform.localScale = new Vector2(Mathf.Sign(myRigidbody.velocity.x), 1f);
+        }
+    }
+
+    bool DoesPlayerHaveHorizontalSpeed()
+    {
+        return Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon; ;
     }
 }
