@@ -25,8 +25,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 291768679052386921}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.006, z: 0}
-  m_LocalScale: {x: 1.375, y: 1, z: 1}
+  m_LocalPosition: {x: -0.0014658, y: -0.0003, z: 0}
+  m_LocalScale: {x: 1.5682733, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7432284173302115441}
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faceCollider: {fileID: 3827482476361224361}
   feetCollider: {fileID: 4503129740445432559}
-  player: {fileID: 0}
+  playerTransform: {fileID: 0}
   aggroRange: 4
   tetherToPlayerLength: 4
   patrolMoveSpeed: 3
