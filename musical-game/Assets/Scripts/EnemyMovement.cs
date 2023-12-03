@@ -10,7 +10,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] BoxCollider2D feetCollider;
 
     [Header("Aggro")]
-    [SerializeField] Transform player;
+    [SerializeField] Transform playerTransform;
     [SerializeField][Tooltip("Value for enemy chase (both sides).")] float aggroRange = 4f;
     [SerializeField] [Tooltip("Value for enemy chase once aggroed, chase doesn't stop unless distance between " +
         "player and enemy is higher, then tether will break. Should not be higher " +
@@ -37,10 +37,10 @@ public class EnemyMovement : MonoBehaviour
     float flipTimer;
 
 
-    public Transform GetPlayer() {  return player; }
-    public float GetDistToPlayer() {  return distToPlayer; }
+    public Transform GetPlayer() {  return playerTransform; }
     public Rigidbody2D GetRigidbody() {  return myRigidbody; }
     public BoxCollider2D GetFeetCollider() {  return feetCollider; }
+    public float GetDistToPlayer() {  return distToPlayer; }
     public float GetAggroRange() {  return aggroRange; }
 
 
@@ -92,7 +92,7 @@ public class EnemyMovement : MonoBehaviour
 
     void UpdateDistances()
     {
-        distToPlayer = Vector2.Distance(faceCollider.transform.position, player.position);
+        distToPlayer = Vector2.Distance(faceCollider.transform.position, playerTransform.position);
         distToSpawnPos = Vector2.Distance(faceCollider.transform.position, spawnPos);
 
         if (distToSpawnPos > aggroRange && distToPlayer >= tetherToPlayerLength)
@@ -115,7 +115,7 @@ public class EnemyMovement : MonoBehaviour
 
     void ChasePlayer()
     {
-        float chaseOrientation = Mathf.Sign(player.position.x - faceCollider.transform.position.x);
+        float chaseOrientation = Mathf.Sign(playerTransform.position.x - faceCollider.transform.position.x);
         patrolMoveSpeed = Math.Abs(patrolMoveSpeed) * chaseOrientation;
 
         // flip once then put flip on cooldown to prevent very fast spin when right underneath player
@@ -124,7 +124,7 @@ public class EnemyMovement : MonoBehaviour
             directionTowardsPlayer = chaseOrientation;
             canFlip = false;
         }
-        MoveHorizontally(directionTowardsPlayer * aggroMoveSpeed);
+        MoveHorizontally(directionTowardsPlayer * aggroMoveSpeed, true);
         transform.localScale = new(directionTowardsPlayer, 1, 1);
         enemyJump.JumpToPlayer();
     }
@@ -132,7 +132,7 @@ public class EnemyMovement : MonoBehaviour
     void MoveToSpawn()
     {
         float directionTowardsSpawn = Mathf.Sign(spawnPos.x - transform.position.x);
-        MoveHorizontally(directionTowardsSpawn * returnToSpawnSpeed);
+        MoveHorizontally(directionTowardsSpawn * returnToSpawnSpeed, false);
         transform.localScale = new(directionTowardsSpawn, 1, 1);
 
         if (distToSpawnPos <= 1f)
@@ -149,12 +149,14 @@ public class EnemyMovement : MonoBehaviour
         MoveHorizontally(patrolMoveSpeed);
     }
 
-    void MoveHorizontally(float speed)
+    void MoveHorizontally(float speed, bool isChasing = false)
     {
         if (feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             myRigidbody.velocity = new Vector2(speed, 0);
-            enemyJump.JumpOnImminentCollision(Mathf.Sign(speed));
+            // check if is chasing to prevent double jump (since it's already jumping if so)
+            if (!isChasing)
+                enemyJump.JumpOnImminentCollision(Mathf.Sign(speed));
         }
     }
 }

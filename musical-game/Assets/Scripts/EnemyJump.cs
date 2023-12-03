@@ -9,14 +9,11 @@ public class EnemyJump : MonoBehaviour
 
     [Header("Jump Variables")]
     [SerializeField] float jumpHeight = 15f;
-    [SerializeField] float jumpCooldown = 1f;
-    public bool canJump = true;
-    float jumpTimer;
 
     HashSet<string> playerTags = new() { "Player", "PlayerFeet" };
-    
+
     EnemyMovement enemyMovement;
-    Transform player;
+    Transform playerTransform;
     float distToPlayer;
     Rigidbody2D myRigidbody;
     BoxCollider2D feetCollider;
@@ -39,37 +36,25 @@ public class EnemyJump : MonoBehaviour
     void Update()
     {
         distToPlayer = enemyMovement.GetDistToPlayer();
-        player = enemyMovement.GetPlayer();
-
-        if (!canJump)
-        {
-            JumpCooldown();
-        }
+        playerTransform = enemyMovement.GetPlayer();
     }
 
-    void JumpCooldown()
+    bool IsGrounded()
     {
-        jumpTimer += Time.deltaTime;
-        if (jumpTimer >= jumpCooldown)
-        {
-            canJump = true;
-            jumpTimer = 0f;
-        }
+        return feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
     }
 
     public void JumpToPlayer()
     {
-        Vector2 endPos = player.position - castPoint.position;
+        Vector2 endPos = playerTransform.position - castPoint.position;
         RaycastHit2D hit = Physics2D.Raycast(castPoint.position, endPos, distToPlayer, ~LayerMask.GetMask("Enemy", "Ground"));
 
         if (hit.collider != null && playerTags.Contains(hit.collider.gameObject.tag))
         {
-            float requiredJumpHeight = CalculateRequiredJumpHeight(player.position);
+            float requiredJumpHeight = CalculateRequiredJumpHeight(playerTransform.position);
             float jumpForceNeeded = CalculateJumpForceNeeded(myRigidbody.gravityScale, requiredJumpHeight);
 
-            if (jumpForceNeeded >= 2 &&
-                jumpForceNeeded <= jumpHeight &&
-                feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+            if (jumpForceNeeded >= 2 && jumpForceNeeded <= jumpHeight && IsGrounded())
             {
                 Jump();
             }
@@ -82,7 +67,9 @@ public class EnemyJump : MonoBehaviour
         Vector2 endPos = new Vector2(direction, 0) * aggroRange / 2;
         RaycastHit2D hit = Physics2D.Raycast(castPoint.position, endPos, aggroRange / 2);
 
-        if (hit.collider != null && hit.collider.gameObject.CompareTag("Ground"))
+        if (hit.collider != null &&
+            hit.collider.gameObject.CompareTag("Ground") &&
+            !playerTags.Contains(hit.collider.gameObject.tag))
         {
             Vector2 obstacleAboveHeight = CheckObstacleAbove(hit.point, direction);
             if (obstacleAboveHeight != null)
@@ -90,9 +77,9 @@ public class EnemyJump : MonoBehaviour
                 float requiredJumpHeight = CalculateRequiredJumpHeight(obstacleAboveHeight);
                 float jumpForceNeeded = CalculateJumpForceNeeded(myRigidbody.gravityScale, requiredJumpHeight);
 
-                if (jumpForceNeeded <= jumpHeight && feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+                if (jumpForceNeeded <= jumpHeight && IsGrounded())
                 {
-                    Jump();
+                    Jump(1f);
                 }
             }
         }
@@ -115,9 +102,7 @@ public class EnemyJump : MonoBehaviour
 
     float CalculateRequiredJumpHeight(Vector2 obstaclePosition)
     {
-        float heightDifference = Mathf.Max(0f, obstaclePosition.y - feetCollider.transform.position.y);
-
-        return heightDifference;
+        return Mathf.Max(0f, obstaclePosition.y - feetCollider.transform.position.y);
     }
 
     float CalculateJumpForceNeeded(float gravityScale, float jumpHeight)
@@ -125,9 +110,11 @@ public class EnemyJump : MonoBehaviour
         return Mathf.Sqrt(2f * Mathf.Abs(gravityScale) * jumpHeight);
     }
 
-    void Jump()
+    void Jump(float extraPushX = 1f)
     {
         float jumpForce = Mathf.Sqrt(2f * myRigidbody.gravityScale * jumpHeight);
-        myRigidbody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+        float unstuckForce = 2f; 
+        myRigidbody.AddForce(new Vector2(-extraPushX * unstuckForce, jumpForce), ForceMode2D.Impulse);
     }
+
 }
