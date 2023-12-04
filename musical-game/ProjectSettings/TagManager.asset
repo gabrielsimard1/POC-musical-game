@@ -8,6 +8,8 @@ TagManager:
   - LayerTrigger02-00
   - LayerTrigger02-01
   - PlayerFeet
+  - Ground
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - UI
   - Ground
   - Player
-  - 
-  - 
+  - Action
+  - Enemy
   - 
   - 
   - 
@@ -47,6 +49,9 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 3944084551
+    locked: 0
+  - name: Enemy
+    uniqueID: 2709409877
     locked: 0
   - name: Player
     uniqueID: 1104729043
