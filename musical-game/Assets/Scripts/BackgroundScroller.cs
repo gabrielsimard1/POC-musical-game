@@ -28,7 +28,6 @@ public class BackgroundScroller : MonoBehaviour
     {
         Vector3 deltaMovement = cameraTransform.position - lastCameraPosition;
         transform.position += new Vector3(deltaMovement.x * parallaxEffectMultiplier.x, deltaMovement.y * parallaxEffectMultiplier.y, 0);
-        Debug.Log("Position pof transfgorm = " + transform.position);
         lastCameraPosition = cameraTransform.position;
 
         // to dynamically move the sprite where the camera is and we have a seamless endless background

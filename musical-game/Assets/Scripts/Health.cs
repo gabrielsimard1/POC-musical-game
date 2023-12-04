@@ -11,23 +11,14 @@ public class Health : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
-        StartCoroutine(testTakeDamage());
-
     }
 
     void TakeDamage(int damage)
     {
-        Debug.Log("taking damage");
         currentHealth -= damage;
         healthBar.SetHealthBarValue(currentHealth);
     }
 
-    IEnumerator testTakeDamage()
-
-    {
-        yield return new WaitForSeconds(3);
-        TakeDamage(50);
-    }
 
     public int GetMaxHealth()
     {
