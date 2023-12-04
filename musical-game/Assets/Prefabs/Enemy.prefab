@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43cf49373be9be449a461d6fd1704163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  castPoint: {fileID: 8834196745151087738}
+  jumpOriginCastPoint: {fileID: 8834196745151087738}
   jumpHeight: 15
 --- !u!50 &3052716057852207112
 Rigidbody2D:
