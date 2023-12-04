@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyJump : MonoBehaviour
 {
     [Header("Game Objects")]
-    [SerializeField] Transform castPoint;
+    [SerializeField] Transform jumpOriginCastPoint;
 
     [Header("Jump Variables")]
     [SerializeField] float jumpHeight = 15f;
@@ -46,8 +46,8 @@ public class EnemyJump : MonoBehaviour
 
     public void JumpToPlayer()
     {
-        Vector2 endPos = playerTransform.position - castPoint.position;
-        RaycastHit2D hit = Physics2D.Raycast(castPoint.position, endPos, distToPlayer, ~LayerMask.GetMask("Enemy", "Ground"));
+        Vector2 endPos = playerTransform.position - jumpOriginCastPoint.position;
+        RaycastHit2D hit = Physics2D.Raycast(jumpOriginCastPoint.position, endPos, distToPlayer, ~LayerMask.GetMask("Enemy", "Ground"));
 
         if (hit.collider != null && playerTags.Contains(hit.collider.gameObject.tag))
         {
@@ -65,7 +65,7 @@ public class EnemyJump : MonoBehaviour
     {
         // TODO: Figure out better way to calculate endPos than aggroRange / 2
         Vector2 endPos = new Vector2(direction, 0) * aggroRange / 2;
-        RaycastHit2D hit = Physics2D.Raycast(castPoint.position, endPos, aggroRange / 2);
+        RaycastHit2D hit = Physics2D.Raycast(jumpOriginCastPoint.position, endPos, aggroRange / 2);
 
         if (hit.collider != null &&
             hit.collider.gameObject.CompareTag("Ground") &&
