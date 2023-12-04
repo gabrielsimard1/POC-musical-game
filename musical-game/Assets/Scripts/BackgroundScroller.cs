@@ -7,15 +7,11 @@ public class BackgroundScroller : MonoBehaviour
     [SerializeField] Vector2 parallaxEffectMultiplier;
     
 
-    private Transform cameraTransform;
-    private Vector3 lastCameraPosition;
-    private float textureUnitSizeX;
+    Transform cameraTransform;
+    Vector3 lastCameraPosition;
+    float textureUnitSizeX;
 
-    private void Awake()
-    {
-    }
-
-    private void Start()
+    void Start()
     {
         cameraTransform = Camera.main.transform;
         lastCameraPosition = transform.position;
@@ -37,7 +33,4 @@ public class BackgroundScroller : MonoBehaviour
             transform.position = new Vector3(cameraTransform.position.x + offsetPositionX, transform.position.y);
         }
     }
-
-
-    
 }
