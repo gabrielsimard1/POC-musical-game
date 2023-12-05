@@ -263,6 +263,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faceCollider: {fileID: 3827482476361224361}
   feetCollider: {fileID: 4503129740445432559}
+  canChase: 0
+  isVertical: 0
   playerTransform: {fileID: 0}
   aggroRange: 4
   tetherToPlayerLength: 4

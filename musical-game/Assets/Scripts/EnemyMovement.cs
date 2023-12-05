@@ -10,6 +10,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] BoxCollider2D feetCollider;
 
     [Header("Aggro")]
+    [SerializeField] bool canChase;
+    [SerializeField][Tooltip("Only usable if Can Chase is set to false.")] bool isVertical;
     [SerializeField] Transform playerTransform;
     [SerializeField][Tooltip("Value for enemy chase (both sides).")] float aggroRange = 4f;
     [SerializeField] [Tooltip("Value for enemy chase once aggroed, chase doesn't stop unless distance between " +
@@ -21,6 +23,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] float patrolMoveSpeed = 3f;
     [SerializeField] float aggroMoveSpeed = 5f;
     [SerializeField] float returnToSpawnSpeed = 6f;
+
+
 
     EnemyJump enemyJump;
     Vector2 spawnPos;
@@ -77,7 +81,7 @@ public class EnemyMovement : MonoBehaviour
 
     void CurrentAction()
     {
-        if (PlayerIsInAggroRange() && !isReturningToSpawn)
+        if (canChase && PlayerIsInAggroRange() && !isReturningToSpawn)
             ChasePlayer();
         else if (isReturningToSpawn)
             MoveToSpawn();
