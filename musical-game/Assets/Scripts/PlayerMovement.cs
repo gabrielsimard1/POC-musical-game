@@ -6,15 +6,16 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    Vector2 rawInput;
-    Rigidbody2D myRigidbody;
-
     [SerializeField] BoxCollider2D feetCollider;
-
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float jumpSpeed = 5f;
+    [SerializeField] int knockbackForce = 20;
+    [SerializeField] float knockbackTime = .5f;
+
+    Vector2 rawInput;
+    Rigidbody2D myRigidbody;
     Animator animator;
-    bool playerHasHorizontalSpeed;
+    bool canMove = true;
 
     void Awake()
     {
@@ -22,10 +23,13 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        playerHasHorizontalSpeed = Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
-        Move();
+        if (canMove) // constant movement was interfering with the knockback. Need to not take input into account to be able to knockback
+        {
+            Move();
+        }
+        
     }
 
     void Move()
@@ -59,6 +63,17 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = new Vector2(Mathf.Sign(myRigidbody.velocity.x), 1f);
         }
     }
+
+    public IEnumerator KnockBack(bool died)
+    {
+        canMove = false;
+        animator.enabled = false; 
+        Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), .5f);
+        myRigidbody.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(knockbackTime);
+        animator.enabled = !died;
+        canMove = !died;
+        }
 
     bool DoesPlayerHaveHorizontalSpeed()
     {

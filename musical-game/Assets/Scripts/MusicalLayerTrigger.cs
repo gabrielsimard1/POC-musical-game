@@ -24,24 +24,28 @@ public class MusicalLayerTrigger : MonoBehaviour
         if (gameObject.tag.Contains(LAYER_TRIGGER_PREFIX) && collision.CompareTag("Player"))
         {
             Rigidbody2D playersRigidBody = collision.GetComponent<Rigidbody2D>();
-            Vector2 playersVelocity = playersRigidBody.velocity;
-            (int layerIndex, int layerVariant) extractedIndexes = ExtractIndexes(gameObject.tag);
-            int playerZone = gameSession.GetCurrentPlayerZone();
-            // comments are assuming the scene is linear from left to right 
-            if (playerZone == extractedIndexes.layerIndex - 1 && playersVelocity.x > 0) 
-                // means we're left from the trigger so we should add a music layer
-                // checking if player is moving from left to right otherwise if he goes back and forth on the trigger it messes up the playerzone
+            if (playersRigidBody)
             {
-               audioPlayer.AddLayer(extractedIndexes.layerVariant);
-               gameSession.IncrementCurrentPlayerZone();
+                Vector2 playersVelocity = playersRigidBody.velocity;
+                (int layerIndex, int layerVariant) extractedIndexes = ExtractIndexes(gameObject.tag);
+                int playerZone = gameSession.GetCurrentPlayerZone();
+                // comments are assuming the scene is linear from left to right 
+                if (playerZone == extractedIndexes.layerIndex - 1 && playersVelocity.x > 0) 
+                    // means we're left from the trigger so we should add a music layer
+                    // checking if player is moving from left to right otherwise if he goes back and forth on the trigger it messes up the playerzone
+                {
+                   audioPlayer.AddLayer(extractedIndexes.layerVariant);
+                   gameSession.IncrementCurrentPlayerZone();
+                }
+                else if (playerZone == extractedIndexes.layerIndex && playersVelocity.x < 0)
+                    // if playerzone == triggerIndex ==> means we were in the music layer zone and crossed the trigger (from right to left) so we should remove the music layer
+                    // checking if player is moving from right to left 
+                {
+                    audioPlayer.RemoveLayer(extractedIndexes.layerVariant);
+                    gameSession.DecrementCurrentPlayerZone();
+                }
             }
-            else if (playerZone == extractedIndexes.layerIndex && playersVelocity.x < 0)
-                // if playerzone == triggerIndex ==> means we were in the music layer zone and crossed the trigger (from right to left) so we should remove the music layer
-                // checking if player is moving from right to left 
-            {
-                audioPlayer.RemoveLayer(extractedIndexes.layerVariant);
-                gameSession.DecrementCurrentPlayerZone();
-            }
+            
         }
     }
 
