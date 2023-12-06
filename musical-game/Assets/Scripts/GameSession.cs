@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameSession : MonoBehaviour
 {
-    GameSession instance;
+    [SerializeField] float timeBeforeReload = 2;
+
+    public static GameSession Instance { get; private set; }
     int currentPlayerZone = 0;
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -36,5 +40,16 @@ public class GameSession : MonoBehaviour
         currentPlayerZone--;
     }
 
-    
+    public void ReloadScene()
+    {
+        StartCoroutine(StartReloadScene());
+    }
+
+    IEnumerator StartReloadScene()
+    {
+        yield return new WaitForSeconds(timeBeforeReload);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+
 }

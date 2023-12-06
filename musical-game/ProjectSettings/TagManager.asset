@@ -10,6 +10,7 @@ TagManager:
   - PlayerFeet
   - Ground
   - Enemy
+  - PitTrigger
   layers:
   - Default
   - TransparentFX
@@ -22,9 +23,7 @@ TagManager:
   - Action
   - Enemy
   - Background
-  - 
-  - 
-  - 
+  - PlayerEnemyCollision
   - 
   - 
   - 
