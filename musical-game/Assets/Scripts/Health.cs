@@ -17,13 +17,16 @@ public class Health : MonoBehaviour
     bool canTakeDamage = true;
     int currentHealth;
 
-    
-    private void Start()
+    void Awake()
     {
-        currentHealth = maxHealth;
         sprite = GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
         playerMovement = GetComponent<PlayerMovement>();
+    }
+
+    void Start()
+    {
+        currentHealth = maxHealth;
     }
 
     public void TakeDamage(int damage)
@@ -54,7 +57,7 @@ public class Health : MonoBehaviour
         return maxHealth;
     }
 
-    IEnumerator  Blink()
+    IEnumerator Blink()
     {
         float elapsedTime = 0;
         while (elapsedTime < invulnerabilityTime)

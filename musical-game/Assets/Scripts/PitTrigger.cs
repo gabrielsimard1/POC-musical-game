@@ -8,7 +8,7 @@ public class PitTrigger : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            collision.gameObject.GetComponent<Health>()?.Die(); // call die() if component found
+            collision.gameObject.GetComponent<Health>()?.Die();
         }
     }
 }

@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpSpeed = 5f;
     [SerializeField] int knockbackForce = 20;
     [SerializeField] float knockbackTime = .5f;
-    
+
     bool isGrounded => feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
 
     Vector2 rawInput;
@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Move();
         }
-        
+
     }
 
     void Move()
@@ -70,14 +70,13 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator KnockBack(bool died)
     {
         canMove = false;
-        animator.enabled = false; 
+        animator.enabled = false;
         Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), isGrounded ? yAxisKnockBack : 0);
         myRigidbody.velocity = knockbackDirection * knockbackForce;
-        //myRigidbody.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
         yield return new WaitForSeconds(knockbackTime);
         animator.enabled = !died;
         canMove = !died;
-        }
+    }
 
     bool DoesPlayerHaveHorizontalSpeed()
     {
