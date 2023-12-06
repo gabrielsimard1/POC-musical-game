@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Game Object")]
     [SerializeField] BoxCollider2D feetCollider;
+    [SerializeField] ParticleSystem dashParticleSystem;
 
     [Header("Movement Speed")]
     [SerializeField] float moveSpeed = 10f;
@@ -46,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if(dashInCooldown && isGrounded)
         {
-            dashInCooldown = false; // reset dash cooldown
+            dashInCooldown = false; // reset dash cooldown upon landing
         }
 
     }
@@ -107,6 +108,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         animator.SetBool("isWalking", false);
         animator.SetBool("isDashing", true);
+        dashParticleSystem.Play();
         ToggleGravity(true);
         Vector2 dashDirection = new(Mathf.Sign(transform.localScale.x) * dashSpeed, 0f);
 
@@ -118,6 +120,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(dashDuration);
 
         ToggleGravity(false);
+        dashParticleSystem.Stop();
         animator.SetBool("isDashing", false);
         isDashing = false;
         dashInCooldown = true;
