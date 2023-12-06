@@ -10,17 +10,17 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] BoxCollider2D feetCollider;
 
     [Header("Aggro")]
-    [SerializeField][Tooltip("Only usable if Is Flying is set to false.")] bool canChase = true;
-    [SerializeField][Tooltip("Only usable if Can Chase is set to false.")] bool isFlying;
+    [SerializeField, Tooltip("Only usable if Is Flying is set to false.")] bool canChase = true;
+    [SerializeField, Tooltip("Only usable if Can Chase is set to false.")] bool isFlying;
     [SerializeField] Transform playerTargetTransform;
-    [SerializeField][Tooltip("Value for enemy chase (both sides).")] float aggroRange = 4f;
-    [SerializeField] [Tooltip("Value for enemy chase once aggroed, chase doesn't stop unless distance between " +
+    [SerializeField, Tooltip("Value for enemy chase (both sides).")] float aggroRange = 4f;
+    [SerializeField, Tooltip("Value for enemy chase once aggroed, chase doesn't stop unless distance between " +
         "player and enemy is higher, then tether will break. Should not be higher " +
         "than Aggro Range (can cause bugs).")]
     float tetherToPlayerLength = 4f;
 
     [Header("Movement")]
-    [SerializeField][Tooltip("Only usable if Can Chase is set to false.")] bool verticalPatrol;
+    [SerializeField, Tooltip("Only usable if Can Chase is set to false.")] bool verticalPatrol;
     [SerializeField] float patrolMoveSpeed = 3f;
     [SerializeField] float aggroMoveSpeed = 5f;
     [SerializeField] float returnToSpawnSpeed = 6f;

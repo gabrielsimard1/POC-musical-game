@@ -7,19 +7,23 @@ using UnityEngine.Tilemaps;
 public class BlinkingPlatform : MonoBehaviour
 {
     float intervalLength = 0;
-
-    [Header("Delay")]
-    [SerializeField] bool hasDelay;
-
-    [Header("Skipping Beats")]
-    [SerializeField] bool isSkippingBeats;
-    [SerializeField] float skippingBeatsCount = 0;
-    float skippingBeatsCountAcc = 0;
-
-
     Material tilemapMaterial;
     TilemapRenderer tilemapRenderer;
     TilemapCollider2D tilemapCollider;
+    float currentPlatformAlpha = 1.0f;
+    Color tilemapColor;
+
+    [Header("Delay")]
+    [SerializeField, Tooltip("If true, will start with collider disabled.\nIf Use Blink Sequence is also true, " +
+        "will start on Interval 2 of the blink sequence instead")] bool hasDelay;
+
+    [Header("Blink Sequence")]
+    [SerializeField] bool useBlinkSequence;
+    [SerializeField, Tooltip("On/Off state during each interval.\nOne element represents 1 * this tilemap's " +
+        "figure of note (e.g., if 1/1 or whole note, then one interval = 4 beats).")] bool[] blinkSequenceIntervals = new bool[2];
+
+    int sequenceIndex = 0;
+
 
     void Awake()
     {
@@ -28,51 +32,47 @@ public class BlinkingPlatform : MonoBehaviour
 
         tilemapMaterial = new Material(tilemapRenderer.material);
         tilemapRenderer.material = tilemapMaterial;
+        tilemapColor = tilemapMaterial.color;
     }
 
     void Start()
     {
-        if (hasDelay)
-        {
-            tilemapRenderer.enabled = false;
-            tilemapCollider.enabled = false;
-        }
+        // if sequence is true, delay acts as starting the sequence one interval ahead
+        if (hasDelay && useBlinkSequence)
+            sequenceIndex++;
+        // if a blink sequence has been programmed, trigger toggle to start the sequence (otherwise will need to wait an entire interval to enter sequence)
+        if (hasDelay || useBlinkSequence)
+            ToggleVisibilityAndCollision();
     }
 
-    public IEnumerator ToggleOpacity(float intervalLength)
+    void ToggleOpacity()
     {
-        float startTime = Time.time;
-        float startAlpha = 1;
-
-        while (Time.time - startTime < intervalLength)
-        {
-            float normalizedTime = (Time.time - startTime) / intervalLength;
-            Color newColor = tilemapMaterial.color;
-            newColor.a = Mathf.Lerp(startAlpha, 0, normalizedTime);
-            tilemapMaterial.color = newColor;
-
-            yield return new WaitForEndOfFrame();
-        }
+        currentPlatformAlpha = (currentPlatformAlpha == 1.0f) ? 0.25f : 1.0f;
+        tilemapColor.a = currentPlatformAlpha;
+        tilemapMaterial.color = tilemapColor;
     }
 
-    public void ToggleVisibilityAndCollision(float intervalLengthParam)
+    public void ToggleVisibilityAndCollision(float intervalLengthParam = -1)
     {
-        if (intervalLength == 0)
+        // Zombie code once used to change tile progressively (e.g., opacity)
+        if (intervalLengthParam > 0)
             intervalLength = intervalLengthParam;
-        if (!isSkippingBeats || 
-            (isSkippingBeats && skippingBeatsCountAcc == skippingBeatsCount - 1))
+        // REMOVE intervalLength IF NOT IMPLEMENTED AFTER FIRST LEVEL IS COMPLETE
+
+
+        if (useBlinkSequence)
         {
-            tilemapRenderer.enabled = !tilemapRenderer.enabled;
-            tilemapCollider.enabled = !tilemapCollider.enabled;
+            bool initialTilemapColliderEnabled = tilemapCollider.enabled;
+            tilemapCollider.enabled = blinkSequenceIntervals[sequenceIndex];
+            if (tilemapCollider.enabled != initialTilemapColliderEnabled)
+                ToggleOpacity();
 
-            if (tilemapRenderer.enabled)
-                //StartCoroutine(ToggleOpacity(intervalLength));
-
-            skippingBeatsCountAcc = 0;
+            sequenceIndex = (sequenceIndex + 1) % (blinkSequenceIntervals.Length);
         }
-        else if(isSkippingBeats)
+        else
         {
-            skippingBeatsCountAcc++;
+            tilemapCollider.enabled = !tilemapCollider.enabled;
+            ToggleOpacity();
         }
     }
 }
