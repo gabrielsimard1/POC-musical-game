@@ -1023,6 +1023,10 @@ PrefabInstance:
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 1363146895}
+    - target: {fileID: 7194078682999786101, guid: 19c4f19845b83b34abed3233b4678d33, type: 3}
+      propertyPath: playerTargetTransform
+      value: 
+      objectReference: {fileID: 1363146895}
     - target: {fileID: 7432284173302115441, guid: 19c4f19845b83b34abed3233b4678d33, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -1073,6 +1077,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8168005695467922782, guid: 19c4f19845b83b34abed3233b4678d33, type: 3}
       propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8279769122497569530, guid: 19c4f19845b83b34abed3233b4678d33, type: 3}
+      propertyPath: contactDamage
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -4697,7 +4705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03a75dd7f6bbce54292cb016d6465267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 5
   healthBar: {fileID: 753956701}
   invulnerabilityTime: 2
 --- !u!1 &1502355621
@@ -6734,6 +6742,10 @@ PrefabInstance:
     - target: {fileID: 4535758308156634855, guid: 5dfd5f91082057041866528091944137, type: 3}
       propertyPath: knockbackTime
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4535758308156634855, guid: 5dfd5f91082057041866528091944137, type: 3}
+      propertyPath: knockbackForce
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4535758308156634873, guid: 5dfd5f91082057041866528091944137, type: 3}
       propertyPath: m_Name

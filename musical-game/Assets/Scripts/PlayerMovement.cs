@@ -11,11 +11,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpSpeed = 5f;
     [SerializeField] int knockbackForce = 20;
     [SerializeField] float knockbackTime = .5f;
+    
+    bool isGrounded => feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
 
     Vector2 rawInput;
     Rigidbody2D myRigidbody;
     Animator animator;
     bool canMove = true;
+    float yAxisKnockBack = .5f;
 
     void Awake()
     {
@@ -48,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
-        if (!feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (!isGrounded || !canMove)
             return;
         if (value.isPressed)
         {
@@ -68,8 +71,9 @@ public class PlayerMovement : MonoBehaviour
     {
         canMove = false;
         animator.enabled = false; 
-        Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), .5f);
-        myRigidbody.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+        Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), isGrounded ? yAxisKnockBack : 0);
+        myRigidbody.velocity = knockbackDirection * knockbackForce;
+        //myRigidbody.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
         yield return new WaitForSeconds(knockbackTime);
         animator.enabled = !died;
         canMove = !died;
