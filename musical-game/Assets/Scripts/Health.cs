@@ -12,16 +12,16 @@ public class Health : MonoBehaviour
     float blinkInterval = .1f;
 
     SpriteRenderer sprite;
-    Rigidbody2D rigidBody;
     PlayerMovement playerMovement;
     bool canTakeDamage = true;
     int currentHealth;
+    Animator animator;
 
     void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
-        rigidBody = GetComponent<Rigidbody2D>();
         playerMovement = GetComponent<PlayerMovement>();
+        animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -79,6 +79,7 @@ public class Health : MonoBehaviour
 
     public void Die()
     {
+        animator.SetBool("isDying", true);
         GameSession.Instance.ReloadScene();
     }
 
