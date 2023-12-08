@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     Vector2 rawInput;
     Rigidbody2D myRigidbody;
     Animator animator;
+    WeaponController weaponController;
     bool canMove = true;
     float yAxisKnockBack = .5f;
     float dashDuration = .2f;
@@ -42,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
         myRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         initialGravityScale = myRigidbody.gravityScale;
+        weaponController = GetComponent<WeaponController>();
     }
 
     void FixedUpdate()
@@ -54,7 +56,6 @@ public class PlayerMovement : MonoBehaviour
         {
             dashInCooldown = false; // reset dash cooldown upon landing
         }
-
     }
 
     void Move()
@@ -87,6 +88,18 @@ public class PlayerMovement : MonoBehaviour
         if (value.isPressed)
         {
             StartCoroutine(Dash());
+        }
+    }
+
+    void OnSwapWeapon(InputValue value)
+    {
+        if (value.Get<float>() > 0)
+        {
+            weaponController.IncrementSelectedWeapon();
+        } 
+        else if (value.Get<float>() < 0)
+        {
+            weaponController.DecrementSelectedWeapon();
         }
     }
 
