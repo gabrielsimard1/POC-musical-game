@@ -31,6 +31,11 @@ public class PlayerMovement : MonoBehaviour
     bool dashInCooldown;
     float initialGravityScale;
 
+    public void SetCanMove(bool canMove)
+    {
+        this.canMove = canMove;
+    }
+
 
     void Awake()
     {
