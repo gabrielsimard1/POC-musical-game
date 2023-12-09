@@ -1,6 +1,8 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement Speed")]
     [SerializeField] float moveSpeed = 10f;
+    [SerializeField] float submergedMoveSpeed = 5f;
     [SerializeField] float dashSpeed = 15f;
     [SerializeField] float jumpSpeed = 5f;
 
@@ -19,18 +22,42 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] int knockbackForce = 20;
     [SerializeField] float knockbackTime = .5f;
 
-    bool isGrounded => feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
+    bool IsGrounded => feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
 
+    Health playerHealth;
     Vector2 rawInput;
     Rigidbody2D myRigidbody;
     Animator animator;
     WeaponController weaponController;
     bool canMove = true;
     float yAxisKnockBack = .5f;
+    
     float dashDuration = .2f;
     bool isDashing;
     bool dashInCooldown;
+    
+    bool isSubmerged;
     float initialGravityScale;
+    float initialDrag;
+    float liquidsGravityScale = 2f;
+    float liquidsRunDrag = 15f;
+    float liquidsDashDrag = 5f;
+
+    CinemachineVirtualCamera vcam;
+    float cameraDetachDelay = 0.3f;
+
+    public bool IsSubmerged
+    {
+        get { return isSubmerged; }
+        private set
+        {
+            if (isSubmerged != value)
+            {
+                isSubmerged = value;
+                SetMoveSpeedViscosity();
+            }
+        }
+    }
 
     public void SetCanMove(bool canMove)
     {
@@ -40,10 +67,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
+        playerHealth = GetComponent<Health>();
+        vcam = FindObjectOfType<CinemachineVirtualCamera>();
         myRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         initialGravityScale = myRigidbody.gravityScale;
         weaponController = GetComponent<WeaponController>();
+        initialDrag = myRigidbody.drag;
+    }
+
+    void Update()
+    {
+        IsSubmerged = myRigidbody.IsTouchingLayers(LayerMask.GetMask("Liquids"));
     }
 
     void FixedUpdate()
@@ -52,15 +87,28 @@ public class PlayerMovement : MonoBehaviour
         {
             Move();
         }
-        if(dashInCooldown && isGrounded)
+        if((dashInCooldown && IsGrounded) || IsSubmerged)
         {
-            dashInCooldown = false; // reset dash cooldown upon landing
+            dashInCooldown = false; // reset dash cooldown upon landing or if submerged
         }
+    }
+
+    public void SetMoveSpeedViscosity()
+    {
+        myRigidbody.drag = IsSubmerged ? liquidsRunDrag : initialDrag;
+        myRigidbody.gravityScale = IsSubmerged ? liquidsGravityScale : initialGravityScale;
+    }
+
+    public IEnumerator DetachCameraFromPlayer()
+    {
+        yield return new WaitForSeconds(cameraDetachDelay);
+        vcam.LookAt = null;
+        vcam.Follow = null;
     }
 
     void Move()
     {
-        Vector2 playerVelocity = new(rawInput.x * moveSpeed, myRigidbody.velocity.y);
+        Vector2 playerVelocity = new(rawInput.x * (IsSubmerged ? submergedMoveSpeed : moveSpeed), myRigidbody.velocity.y);
         myRigidbody.velocity = playerVelocity;
         bool playerHasHorizontalSpeed = DoesPlayerHaveHorizontalSpeed();
         animator.SetBool("isWalking", playerHasHorizontalSpeed);
@@ -74,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
-        if (!isGrounded || !canMove)
+        if ((!IsGrounded && !IsSubmerged) || !canMove)
             return;
         if (value.isPressed)
         {
@@ -111,15 +159,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public IEnumerator KnockBack(bool died)
+    public IEnumerator KnockBack()
     {
         canMove = false;
-        animator.enabled = false;
-        Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), isGrounded ? yAxisKnockBack : 0);
+        animator.SetBool("isWalking", false);
+        Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), IsGrounded ? yAxisKnockBack : 0);
         myRigidbody.velocity = knockbackDirection * knockbackForce;
         yield return new WaitForSeconds(knockbackTime);
-        animator.enabled = !died;
-        canMove = !died;
+        canMove = playerHealth.GetCurrentHealth() > 0;
     }
     IEnumerator Dash()
     {
@@ -127,31 +174,33 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isWalking", false);
         animator.SetBool("isDashing", true);
         dashParticleSystem.Play();
-        ToggleGravity(true);
+        ToggleGravityDash(true);
         Vector2 dashDirection = new(Mathf.Sign(transform.localScale.x) * dashSpeed, 0f);
 
-        if (isGrounded)
+        if (IsGrounded)
             myRigidbody.AddForce(dashDirection, ForceMode2D.Impulse);
         else
             myRigidbody.velocity = dashDirection; // if mid-air, lock y axis in place (otherwise if quick jump + dash, player dash upwards higher than jump height)
 
         yield return new WaitForSeconds(dashDuration);
 
-        ToggleGravity(false);
+        ToggleGravityDash(false);
         dashParticleSystem.Stop();
         animator.SetBool("isDashing", false);
         isDashing = false;
         dashInCooldown = true;
     }
 
-    void ToggleGravity(bool disableGravity)
+    void ToggleGravityDash(bool disableGravity)
     {
         // disable gravity so mid-air dash can stay mid-air
         // don't disable gravity if grounded, otherwise dash + jump makes it jump absurdly high
-        if (disableGravity && !isGrounded)
-            myRigidbody.gravityScale = 0;
-        else
-            myRigidbody.gravityScale = initialGravityScale;
+        myRigidbody.gravityScale = disableGravity && !IsGrounded ? 0 : initialGravityScale;
+
+        if (disableGravity && IsSubmerged)
+            myRigidbody.drag = liquidsDashDrag;
+        else if (!disableGravity)
+            SetMoveSpeedViscosity();
     }
 
 

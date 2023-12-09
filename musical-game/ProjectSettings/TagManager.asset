@@ -11,6 +11,8 @@ TagManager:
   - Ground
   - Enemy
   - PitTrigger
+  - Liquids
+  - Spikes
   layers:
   - Default
   - TransparentFX
@@ -24,8 +26,8 @@ TagManager:
   - Enemy
   - Background
   - PlayerEnemyCollision
-  - 
-  - 
+  - Liquids
+  - Spikes
   - 
   - 
   - 
@@ -51,12 +53,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Ground
-    uniqueID: 3944084551
-    locked: 0
   - name: Enemy
     uniqueID: 2709409877
     locked: 0
   - name: Player
     uniqueID: 1104729043
+    locked: 0
+  - name: Liquids
+    uniqueID: 3243303819
+    locked: 0
+  - name: Ground
+    uniqueID: 3944084551
     locked: 0

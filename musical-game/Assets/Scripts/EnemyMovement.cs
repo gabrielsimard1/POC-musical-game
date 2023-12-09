@@ -24,6 +24,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] float patrolMoveSpeed = 3f;
     [SerializeField] float aggroMoveSpeed = 5f;
     [SerializeField] float returnToSpawnSpeed = 6f;
+    [SerializeField, Range(0, 1)] float submergedMoveSpeedReduceCoef = 0.5f;
 
     EnemyJump enemyJump;
     Vector2 spawnPos;
@@ -39,6 +40,28 @@ public class EnemyMovement : MonoBehaviour
     const float flipCooldown = 0.3f;
     float flipTimer;
 
+    bool isSubmerged;
+    float initialGravityScale;
+    float initialDrag;
+    float liquidsGravityScale = 2.5f;
+    float liquidsDrag = 5f;
+    public bool IsSubmerged
+    {
+        get { return isSubmerged; }
+        private set
+        {
+            if (isSubmerged != value)
+            {
+                isSubmerged = value;
+                SetMoveSpeedViscosity();
+            }
+        }
+    }
+    public bool IsGrounded
+    {
+        get { return feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")); }
+    }
+
 
     public Transform GetPlayer() {  return playerTargetTransform; }
     public Rigidbody2D GetRigidbody() {  return myRigidbody; }
@@ -51,6 +74,8 @@ public class EnemyMovement : MonoBehaviour
     {
         myRigidbody = GetComponent<Rigidbody2D>();
         enemyJump = GetComponent<EnemyJump>();
+        initialGravityScale = myRigidbody.gravityScale;
+        initialDrag = myRigidbody.drag;
     }
 
     void Start()
@@ -62,6 +87,7 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
+        IsSubmerged = myRigidbody.IsTouchingLayers(LayerMask.GetMask("Liquids"));
         UpdateDistances();
         CurrentAction();
         if (!canFlip)
@@ -88,6 +114,12 @@ public class EnemyMovement : MonoBehaviour
             MoveToSpawn();
         else
             Patrol();
+    }
+
+    public void SetMoveSpeedViscosity()
+    {
+        myRigidbody.drag = IsSubmerged ? liquidsDrag : initialDrag;
+        myRigidbody.gravityScale = IsSubmerged ? liquidsGravityScale : initialGravityScale;
     }
 
     bool PlayerIsInAggroRange()
@@ -157,9 +189,11 @@ public class EnemyMovement : MonoBehaviour
 
     void Move(float speed, bool isChasing = false)
     {
+        if (IsSubmerged)
+            speed *= submergedMoveSpeedReduceCoef;
         // if mid-air, do not add velocity (messes with jump velocity calculations and physics)
         // if flying, by default it wont chase player so no issues with jumping velocity
-        if (feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")) || isFlying)
+        if (IsGrounded || isFlying)
         {
             Vector2 movementAxis = verticalPatrol ? new(0,speed) : new(speed,0);
             myRigidbody.velocity = movementAxis;

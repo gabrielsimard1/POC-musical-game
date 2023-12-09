@@ -18,6 +18,7 @@ public class EnemyJump : MonoBehaviour
     Rigidbody2D myRigidbody;
     BoxCollider2D feetCollider;
     float aggroRange;
+    int LayersToIgnoreJump => ~LayerMask.GetMask("Enemy", "Liquids", "Spikes");
 
 
     void Awake()
@@ -39,22 +40,23 @@ public class EnemyJump : MonoBehaviour
         playerTransform = enemyMovement.GetPlayer();
     }
 
-    bool IsGrounded()
+    bool CollidesWithWall(RaycastHit2D hit)
     {
-        return feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
+        return hit.collider.gameObject.CompareTag("Ground");
     }
 
     public void JumpToPlayer()
     {
         Vector2 endPos = playerTransform.position - jumpOriginCastPoint.position;
-        RaycastHit2D hit = Physics2D.Raycast(jumpOriginCastPoint.position, endPos, distToPlayer, ~LayerMask.GetMask("Enemy", "Ground"));
+        RaycastHit2D hit = Physics2D.Raycast(jumpOriginCastPoint.position, endPos, distToPlayer, LayersToIgnoreJump);
 
-        if (hit.collider != null && playerTags.Contains(hit.collider.gameObject.tag))
+        if (hit.collider != null && 
+            (CollidesWithWall(hit) || playerTags.Contains(hit.collider.gameObject.tag)))
         {
             float requiredJumpHeight = CalculateRequiredJumpHeight(playerTransform.position);
             float jumpForceNeeded = CalculateJumpForceNeeded(myRigidbody.gravityScale, requiredJumpHeight);
 
-            if (jumpForceNeeded >= 2 && jumpForceNeeded <= jumpHeight && IsGrounded())
+            if (jumpForceNeeded >= 2 && jumpForceNeeded <= jumpHeight && enemyMovement.IsGrounded)
             {
                 Jump();
             }
@@ -65,10 +67,10 @@ public class EnemyJump : MonoBehaviour
     {
         // TODO: Figure out better way to calculate endPos than aggroRange / 2
         Vector2 endPos = new Vector2(direction, 0) * aggroRange / 2;
-        RaycastHit2D hit = Physics2D.Raycast(jumpOriginCastPoint.position, endPos, aggroRange / 2);
+        RaycastHit2D hit = Physics2D.Raycast(jumpOriginCastPoint.position, endPos, aggroRange / 2, LayersToIgnoreJump);
 
         if (hit.collider != null &&
-            hit.collider.gameObject.CompareTag("Ground") &&
+            CollidesWithWall(hit) &&
             !playerTags.Contains(hit.collider.gameObject.tag))
         {
             Vector2 obstacleAboveHeight = CheckObstacleAbove(hit.point, direction);
@@ -77,9 +79,9 @@ public class EnemyJump : MonoBehaviour
                 float requiredJumpHeight = CalculateRequiredJumpHeight(obstacleAboveHeight);
                 float jumpForceNeeded = CalculateJumpForceNeeded(myRigidbody.gravityScale, requiredJumpHeight);
 
-                if (jumpForceNeeded <= jumpHeight && IsGrounded())
+                if (jumpForceNeeded <= jumpHeight && enemyMovement.IsGrounded)
                 {
-                    Jump(1f);
+                    Jump();
                 }
             }
         }
@@ -110,11 +112,11 @@ public class EnemyJump : MonoBehaviour
         return Mathf.Sqrt(2f * Mathf.Abs(gravityScale) * jumpHeight);
     }
 
-    void Jump(float extraPushX = 1f)
+    void Jump()
     {
         float jumpForce = Mathf.Sqrt(2f * myRigidbody.gravityScale * jumpHeight);
         float unstuckForce = 2f; 
-        myRigidbody.AddForce(new Vector2(-extraPushX * unstuckForce, jumpForce), ForceMode2D.Impulse);
+        myRigidbody.AddForce(new Vector2(Mathf.Sign(transform.localScale.x) * unstuckForce, jumpForce), ForceMode2D.Impulse);
     }
 
 }
