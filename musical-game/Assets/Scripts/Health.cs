@@ -17,6 +17,19 @@ public class Health : MonoBehaviour
     int currentHealth;
     Animator animator;
 
+    public int GetMaxHealth()
+    {
+        return maxHealth;
+    }
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+    public HealthBar GetHealthBar() 
+    { 
+        return healthBar; 
+    }
+
     void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
@@ -35,7 +48,7 @@ public class Health : MonoBehaviour
         {
             currentHealth -= damage;
             healthBar.SetHealthBarValue(currentHealth);
-            StartCoroutine(playerMovement.KnockBack(currentHealth <= 0)); // so we can't move after we die
+            StartCoroutine(playerMovement.KnockBack());
             StartCoroutine(StartInvulnerability());
             if (currentHealth <= 0)
             {
@@ -49,13 +62,9 @@ public class Health : MonoBehaviour
         canTakeDamage = false;
         StartCoroutine(Blink());
         yield return new WaitForSeconds(invulnerabilityTime);
-        canTakeDamage = true;
+        canTakeDamage = currentHealth > 0;
     }
 
-    public int GetMaxHealth()
-    {
-        return maxHealth;
-    }
 
     IEnumerator Blink()
     {
@@ -79,6 +88,10 @@ public class Health : MonoBehaviour
 
     public void Die()
     {
+        canTakeDamage = false;
+        playerMovement.SetCanMove(false);
+        currentHealth = 0;
+        StartCoroutine(playerMovement.DetachCameraFromPlayer());
         animator.SetBool("isDying", true);
         GameSession.Instance.ReloadScene();
     }
