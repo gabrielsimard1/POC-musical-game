@@ -29,6 +29,7 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D myRigidbody;
     Animator animator;
     WeaponController weaponController;
+    Shooter shooter;
     bool canMove = true;
     float yAxisKnockBack = .5f;
     
@@ -74,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
         initialGravityScale = myRigidbody.gravityScale;
         weaponController = GetComponent<WeaponController>();
         initialDrag = myRigidbody.drag;
+        shooter = GetComponent<Shooter>();
     }
 
     void Update()
@@ -207,5 +209,14 @@ public class PlayerMovement : MonoBehaviour
     bool DoesPlayerHaveHorizontalSpeed()
     {
         return Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon; ;
+    }
+
+    void OnFire(InputValue value)
+    {
+        Debug.Log("setting bool " + value.isPressed);
+        if (shooter != null)
+        {
+            shooter.SetIsFiring(value.isPressed);
+        }
     }
 }
