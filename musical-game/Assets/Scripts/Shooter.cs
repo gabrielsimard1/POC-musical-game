@@ -38,7 +38,7 @@ public class Shooter : MonoBehaviour
         {
             firingCoroutine = StartCoroutine(FireContinuously());
         }
-        else if (firingCoroutine != null)
+        else if (!isFiring && firingCoroutine != null)
         {
             StopCoroutine(firingCoroutine);
             firingCoroutine = null;

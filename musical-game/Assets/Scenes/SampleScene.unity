@@ -2780,7 +2780,7 @@ Tilemap:
       - {fileID: 1250705952, guid: c71fb7a4efe6f414ab454260d552d9bd, type: 3}
       - {fileID: 354345903, guid: c71fb7a4efe6f414ab454260d552d9bd, type: 3}
       - {fileID: -1374727220, guid: c71fb7a4efe6f414ab454260d552d9bd, type: 3}
-      m_AnimationSpeed: 10
+      m_AnimationSpeed: 10.000001
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -7, y: -4, z: 0}
@@ -2790,7 +2790,7 @@ Tilemap:
       - {fileID: 1250705952, guid: c71fb7a4efe6f414ab454260d552d9bd, type: 3}
       - {fileID: 354345903, guid: c71fb7a4efe6f414ab454260d552d9bd, type: 3}
       - {fileID: -1374727220, guid: c71fb7a4efe6f414ab454260d552d9bd, type: 3}
-      m_AnimationSpeed: 10
+      m_AnimationSpeed: 10.000001
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   m_TileAssetArray:
@@ -9065,6 +9065,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 6034801393704544689, guid: 0f4f9dfb2b43e38468e2b363de51991e, type: 3}
+      propertyPath: contactDamage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8501953642428987313, guid: 0f4f9dfb2b43e38468e2b363de51991e, type: 3}
       propertyPath: m_RootOrder
       value: 13
@@ -9109,5 +9113,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6034801393704544689, guid: 0f4f9dfb2b43e38468e2b363de51991e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 0f4f9dfb2b43e38468e2b363de51991e, type: 3}
