@@ -213,7 +213,6 @@ public class PlayerMovement : MonoBehaviour
 
     void OnFire(InputValue value)
     {
-        Debug.Log("setting bool " + value.isPressed);
         if (shooter != null)
         {
             shooter.SetIsFiring(value.isPressed);

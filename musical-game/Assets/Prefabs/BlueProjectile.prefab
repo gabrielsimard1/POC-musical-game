@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 8501953642428987313}
   - component: {fileID: 3863291533940705037}
   - component: {fileID: 7323392437964469605}
-  m_Layer: 0
+  - component: {fileID: 5925559842295253731}
+  m_Layer: 7
   m_Name: BlueProjectile
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,6 +72,19 @@ CapsuleCollider2D:
   m_Offset: {x: 0.00073337567, y: 0.00042373684}
   m_Size: {x: 0.40517431, y: 0.16039176}
   m_Direction: 1
+--- !u!114 &5925559842295253731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944401864243600741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 916155640c47b854d8521ce78ca1c760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contactDamage: 1
 --- !u!1 &4275415804116013655
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,7 +95,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2567377883658099313}
   - component: {fileID: 3910839701029668041}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: blue laser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,9 +155,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 1104729043
+  m_SortingLayer: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 08cb19295005f1043a7f3eeb4e534ff2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

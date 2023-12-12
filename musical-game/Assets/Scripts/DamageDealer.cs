@@ -13,9 +13,9 @@ public class DamageDealer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") && collision.gameObject.transform.parent)
+        if (gameObject.CompareTag("Enemy") && collision.gameObject.CompareTag("Player") && collision.gameObject.transform.parent)
         {
             collision.gameObject.transform.parent.gameObject.GetComponent<Health>()?.TakeDamage(contactDamage);
-        }
+        } // todo adjust when enemies can shoot avec un OR 
     }
 }
