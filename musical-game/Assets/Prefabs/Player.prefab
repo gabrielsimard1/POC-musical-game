@@ -4780,7 +4780,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1104729043
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 10
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -4924,6 +4924,7 @@ GameObject:
   - component: {fileID: 1442338805}
   - component: {fileID: 1442338819}
   - component: {fileID: 1739033832597830327}
+  - component: {fileID: 1442338813}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -4989,7 +4990,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1104729043
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -1902897965, guid: 7f0ebebef53f4b242ab897666cd24638, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5153,6 +5154,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f06e6d09a0f1b7c4b97a1662ca839209, type: 2}
   - {fileID: 11400000, guid: d6215f56197356947bc667663afe431b, type: 2}
   laserAmmoUI: {fileID: 0}
+--- !u!114 &1442338813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4535758308156634873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89bdf3ee3c6231e469145b6e9bf57b91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 944401864243600741, guid: 0f4f9dfb2b43e38468e2b363de51991e, type: 3}
+  projectileSpeed: 15
+  projectileLifetime: 5
+  firingRate: 0.2
 --- !u!1 &6302272653882459852
 GameObject:
   m_ObjectHideFlags: 0
