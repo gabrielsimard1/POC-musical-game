@@ -29,6 +29,9 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D myRigidbody;
     Animator animator;
     WeaponController weaponController;
+    Shooter shooter;
+
+    bool DoesPlayerHaveHorizontalSpeed() => Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
     bool canMove = true;
     float yAxisKnockBack = .5f;
     float jumpVelocityOnRelease = 2f;
@@ -75,6 +78,7 @@ public class PlayerMovement : MonoBehaviour
         initialGravityScale = myRigidbody.gravityScale;
         weaponController = GetComponent<WeaponController>();
         initialDrag = myRigidbody.drag;
+        shooter = GetComponent<Shooter>();
     }
 
     void Update()
@@ -166,11 +170,13 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator KnockBack()
     {
         canMove = false;
+        shooter.SetCanShoot(false);
         animator.SetBool("isWalking", false);
         Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), IsGrounded ? yAxisKnockBack : 0);
         myRigidbody.velocity = knockbackDirection * knockbackForce;
         yield return new WaitForSeconds(knockbackTime);
         canMove = playerHealth.GetCurrentHealth() > 0;
+        shooter.SetCanShoot(true);
     }
     IEnumerator Dash()
     {
@@ -207,9 +213,11 @@ public class PlayerMovement : MonoBehaviour
             SetMoveSpeedViscosity();
     }
 
-
-    bool DoesPlayerHaveHorizontalSpeed()
+    void OnFire(InputValue value)
     {
-        return Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon; ;
+        if (shooter != null)
+        {
+            shooter.SetIsFiring(value.isPressed);
+        }
     }
 }

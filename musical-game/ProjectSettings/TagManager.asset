@@ -13,6 +13,7 @@ TagManager:
   - PitTrigger
   - Liquids
   - Spikes
+  - PlayerBullet
   - PlayerSword
   layers:
   - Default
