@@ -57,12 +57,15 @@ TagManager:
   - name: Enemy
     uniqueID: 2709409877
     locked: 0
-  - name: Ground
-    uniqueID: 3944084551
-    locked: 0
   - name: Player
     uniqueID: 1104729043
     locked: 0
   - name: Liquids
     uniqueID: 3243303819
+    locked: 0
+  - name: Ground
+    uniqueID: 3944084551
+    locked: 0
+  - name: Spikes
+    uniqueID: 3258177535
     locked: 0
