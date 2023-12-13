@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     bool DoesPlayerHaveHorizontalSpeed() => Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
     bool canMove = true;
     float yAxisKnockBack = .5f;
+    float jumpVelocityOnRelease = 2f;
     
     float dashDuration = .2f;
     bool isDashing;
@@ -126,13 +127,16 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
-        if ((!IsGrounded && !IsSubmerged) || !canMove)
-            return;
-        if (value.isPressed)
+        if (value.isPressed && canMove && (IsGrounded || IsSubmerged))
         {
             myRigidbody.velocity += new Vector2(0f, jumpSpeed);
         }
+        else if (!value.isPressed && !IsGrounded && myRigidbody.velocity.y > 0)
+        {
+            myRigidbody.velocity = new Vector2(0f, myRigidbody.velocity.y / jumpVelocityOnRelease);
+        }
     }
+
     void OnDash(InputValue value)
     {
         if (!canMove || dashInCooldown)

@@ -14,6 +14,7 @@ TagManager:
   - Liquids
   - Spikes
   - PlayerBullet
+  - PlayerSword
   layers:
   - Default
   - TransparentFX
@@ -65,4 +66,7 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 3944084551
+    locked: 0
+  - name: Spikes
+    uniqueID: 3258177535
     locked: 0
