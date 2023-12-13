@@ -4829,6 +4829,7 @@ GameObject:
   - component: {fileID: 1442338799}
   - component: {fileID: 1442338805}
   - component: {fileID: 838921390422310028}
+  - component: {fileID: 1442338811}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -5040,6 +5041,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89bdf3ee3c6231e469145b6e9bf57b91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 944401864243600741, guid: 0f4f9dfb2b43e38468e2b363de51991e, type: 3}
+  projectileSpeed: 15
+  projectileLifetime: 5
+  firingRate: 0.2
+--- !u!114 &1442338811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4535758308156634873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4c1c47f769d88f469a2f365f239fa68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownedWeapons:
+  - {fileID: 11400000, guid: f06e6d09a0f1b7c4b97a1662ca839209, type: 2}
+  - {fileID: 11400000, guid: d6215f56197356947bc667663afe431b, type: 2}
+  laserAmmoUI: {fileID: 0}
 --- !u!1 &6302272653882459852
 GameObject:
   m_ObjectHideFlags: 0

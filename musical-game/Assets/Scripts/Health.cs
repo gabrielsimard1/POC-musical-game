@@ -16,6 +16,7 @@ public class Health : MonoBehaviour
     bool canTakeDamage = true;
     int currentHealth;
     Animator animator;
+    Shooter shooter;
 
     public int GetMaxHealth()
     {
@@ -35,6 +36,7 @@ public class Health : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
+        shooter = GetComponent<Shooter>();
     }
 
     void Start()
@@ -88,6 +90,7 @@ public class Health : MonoBehaviour
 
     public void Die()
     {
+        shooter.SetCanShoot(false);
         canTakeDamage = false;
         playerMovement.SetCanMove(false);
         currentHealth = 0;

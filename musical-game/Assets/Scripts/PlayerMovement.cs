@@ -30,6 +30,8 @@ public class PlayerMovement : MonoBehaviour
     Animator animator;
     WeaponController weaponController;
     Shooter shooter;
+
+    bool DoesPlayerHaveHorizontalSpeed() => Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
     bool canMove = true;
     float yAxisKnockBack = .5f;
     
@@ -164,11 +166,13 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator KnockBack()
     {
         canMove = false;
+        shooter.SetCanShoot(false);
         animator.SetBool("isWalking", false);
         Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), IsGrounded ? yAxisKnockBack : 0);
         myRigidbody.velocity = knockbackDirection * knockbackForce;
         yield return new WaitForSeconds(knockbackTime);
         canMove = playerHealth.GetCurrentHealth() > 0;
+        shooter.SetCanShoot(true);
     }
     IEnumerator Dash()
     {
@@ -203,12 +207,6 @@ public class PlayerMovement : MonoBehaviour
             myRigidbody.drag = liquidsDashDrag;
         else if (!disableGravity)
             SetMoveSpeedViscosity();
-    }
-
-
-    bool DoesPlayerHaveHorizontalSpeed()
-    {
-        return Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon; ;
     }
 
     void OnFire(InputValue value)

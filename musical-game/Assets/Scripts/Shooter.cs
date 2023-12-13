@@ -11,12 +11,8 @@ public class Shooter : MonoBehaviour
 
     const float xOffset = .27f;
     bool isFiring;
+    bool canShoot = true;
     Coroutine firingCoroutine;
-
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
@@ -33,9 +29,14 @@ public class Shooter : MonoBehaviour
         return isFiring;
     }
 
+    public void SetCanShoot(bool canShoot)
+    {
+        this.canShoot = canShoot;
+    }
+
     void Fire()
     {
-        if (isFiring && firingCoroutine == null)
+        if (canShoot && isFiring && firingCoroutine == null)
         {
             firingCoroutine = StartCoroutine(FireContinuously());
         }
@@ -48,14 +49,13 @@ public class Shooter : MonoBehaviour
 
     IEnumerator FireContinuously()
     {
-        while(true)
+        while(canShoot)
         {
             Vector3 position = transform.position;
             position.x += xOffset * Mathf.Sign(transform.localScale.x);
             GameObject instance = Instantiate(projectilePrefab, position, Quaternion.identity);
 
-            Rigidbody2D rb = instance.GetComponent<Rigidbody2D>();
-            if (rb != null )
+            if (instance.TryGetComponent<Rigidbody2D>(out var rb))
             {
                 rb.velocity = transform.right * projectileSpeed * Mathf.Sign(transform.localScale.x);
             }
