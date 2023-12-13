@@ -88,12 +88,16 @@ public class EnemyMovement : MonoBehaviour
     void Update()
     {
         IsSubmerged = myRigidbody.IsTouchingLayers(LayerMask.GetMask("Liquids"));
-        UpdateDistances();
-        CurrentAction();
         if (!canFlip)
         {
             FlipCooldown();
         }
+    }
+
+    void FixedUpdate()
+    {
+        UpdateDistances();
+        CurrentAction();
     }
 
     void FlipCooldown()
