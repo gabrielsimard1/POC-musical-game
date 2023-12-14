@@ -13,14 +13,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] ParticleSystem dashParticleSystem;
 
     [Header("Movement Speed")]
-    [SerializeField] float moveSpeed = 10f;
-    [SerializeField] float submergedMoveSpeed = 5f;
-    [SerializeField] float dashSpeed = 15f;
-    [SerializeField] float jumpSpeed = 5f;
+    [SerializeField, Min(0)] float moveSpeed = 10f;
+    [SerializeField, Min(0)] float submergedMoveSpeed = 5f;
+    [SerializeField, Min(0)] float dashSpeed = 15f;
+    [SerializeField, Min(0)] float jumpSpeed = 5f;
 
     [Header("Knockback")]
     [SerializeField] int knockbackForce = 20;
-    [SerializeField] float knockbackTime = .5f;
+    [SerializeField, Min(0)] float knockbackTime = .5f;
 
     bool IsGrounded => feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
 
@@ -49,6 +49,11 @@ public class PlayerMovement : MonoBehaviour
 
     CinemachineVirtualCamera vcam;
     float cameraDetachDelay = 0.3f;
+
+    public Rigidbody2D GetMyRigidbody()
+    {
+        return myRigidbody;
+    }
 
     public bool IsSubmerged
     {
@@ -175,6 +180,8 @@ public class PlayerMovement : MonoBehaviour
         Vector2 knockbackDirection = new Vector2(-Mathf.Sign(myRigidbody.velocity.x), IsGrounded ? yAxisKnockBack : 0);
         myRigidbody.velocity = knockbackDirection * knockbackForce;
         yield return new WaitForSeconds(knockbackTime);
+        yield return new WaitUntil(() => IsGrounded);
+        myRigidbody.velocity = Vector3.zero;
         canMove = playerHealth.GetCurrentHealth() > 0;
         shooter.SetCanShoot(true);
     }

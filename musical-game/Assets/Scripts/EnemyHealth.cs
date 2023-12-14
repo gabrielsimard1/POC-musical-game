@@ -5,17 +5,25 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] int maxHealth = 2;
+    EnemyMovement enemyMovement;
 
-    int currentHealth;
+    public int currentHealth;
+
+    void Awake()
+    {
+        enemyMovement = GetComponent<EnemyMovement>();
+    }
 
     void Start()
     {
         currentHealth = maxHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, float direction, float knockbackForce)
     {
         currentHealth -= damage;
+        StartCoroutine(enemyMovement.KnockBack(direction, knockbackForce));
+
         if (currentHealth <= 0)
         {
             Die();

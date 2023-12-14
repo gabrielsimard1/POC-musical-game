@@ -195,6 +195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7432284173302115441}
   - component: {fileID: 7432284173302115440}
+  - component: {fileID: 7603892901238091114}
   - component: {fileID: 7432284173302115447}
   - component: {fileID: 1752679295673813721}
   - component: {fileID: 7194078682999786101}
@@ -266,7 +267,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1585557419
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -1897736852, guid: c2b3cf97a336b9c45a452166da827b4a, type: 3}
   m_Color: {r: 0.18124647, g: 0.9433962, b: 0, a: 1}
@@ -279,6 +280,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7603892901238091114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7432284173302115446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fcedae7d0d129e40914b59b078fe1a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  currentHealth: 0
 --- !u!95 &7432284173302115447
 Animator:
   serializedVersion: 4
@@ -311,7 +326,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 916155640c47b854d8521ce78ca1c760, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  contactDamage: 50
+  contactDamage: 1
+  knockbackForce: 5
 --- !u!114 &7194078682999786101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,6 +351,10 @@ MonoBehaviour:
   patrolMoveSpeed: 3
   aggroMoveSpeed: 5
   returnToSpawnSpeed: 6
+  submergedMoveSpeedReduceCoef: 0.5
+  knockbackYeetTime: 0.1
+  knockbackDownTime: 0.2
+  yAxisKnockBack: 0
 --- !u!114 &1736612531513829341
 MonoBehaviour:
   m_ObjectHideFlags: 0

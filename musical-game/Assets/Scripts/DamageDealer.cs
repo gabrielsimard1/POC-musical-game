@@ -5,38 +5,58 @@ using UnityEngine;
 public class DamageDealer : MonoBehaviour
 {
     [SerializeField] int contactDamage = 50;
+    [SerializeField] float knockbackForce = 5;
 
-    bool IsPlayerBeingHit(Collider2D collision) => gameObject.CompareTag("Enemy") && collision.gameObject.CompareTag("Player");
+    HashSet<string> PLAYER_WEAPON_TAGS = new() { Tags.PLAYER_BULLET_TAG, Tags.PLAYER_SWORD_TAG };
 
-    bool IsEnemyBeingHitByBullet(Collider2D collision) => gameObject.CompareTag("PlayerBullet") && collision.gameObject.CompareTag("Enemy");
+    bool IsPlayerBeingHit(Collider2D collision) => gameObject.CompareTag(Tags.ENEMY_TAG) && collision.gameObject.CompareTag(Tags.PLAYER_TAG);
 
-    bool IsPlayerBulletHittingWall(Collider2D collision) => gameObject.CompareTag("PlayerBullet") && collision.gameObject.CompareTag("Ground");
+    bool IsEnemyBeingHitByPlayerWeapon(Collider2D collision) => PLAYER_WEAPON_TAGS.Contains(gameObject.tag) && collision.gameObject.CompareTag(Tags.ENEMY_TAG);
+
 
     public float GetContactDamage()
     {
         return contactDamage;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (IsEnemyBeingHitByPlayerWeapon(collision))
+        {
+            HandleEnemyHitByPlayerWeapon(collision);
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D collision)
     {
         if (IsPlayerBeingHit(collision))
         {
             collision.gameObject.transform.parent?.gameObject.GetComponent<Health>()?.TakeDamage(contactDamage);
-        } 
-        else if (IsEnemyBeingHitByBullet(collision))
-        {
-            collision.gameObject.transform.parent?.gameObject.GetComponent<EnemyHealth>()?.TakeDamage(contactDamage);
-            Destroy(gameObject); // here we assume the enemy is being hit by a bullet so we destroy the bullet on impact
-            // to adjust on sword dash
         }
+    }
+
+    void HandleEnemyHitByPlayerWeapon(Collider2D collision)
+    {
+        collision.gameObject.transform.parent?.gameObject.GetComponent<EnemyHealth>()?.TakeDamage(contactDamage, CalculateKnockbackDirection(), knockbackForce);
+        if (gameObject.CompareTag(Tags.PLAYER_BULLET_TAG))
+            Destroy(gameObject);
+    }
+
+    float CalculateKnockbackDirection()
+    {
+        float knockbackDirection = 0;
+        if (gameObject.CompareTag(Tags.PLAYER_BULLET_TAG))
+            knockbackDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x; // direction projectile is coming from
+        else if (gameObject.CompareTag(Tags.PLAYER_SWORD_TAG))
+            knockbackDirection = gameObject.transform.parent.transform.localScale.x; // direction player is facing
+        return knockbackDirection;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (gameObject.tag.Equals("PlayerBullet"))
+        if (gameObject.tag.Equals(Tags.PLAYER_BULLET_TAG))
         {
             Destroy(gameObject);
-
         }
     }
 }

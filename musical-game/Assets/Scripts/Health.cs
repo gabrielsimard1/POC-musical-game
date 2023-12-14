@@ -93,6 +93,7 @@ public class Health : MonoBehaviour
         shooter.SetCanShoot(false);
         canTakeDamage = false;
         playerMovement.SetCanMove(false);
+        playerMovement.GetMyRigidbody().velocity = Vector3.zero;
         currentHealth = 0;
         StartCoroutine(playerMovement.DetachCameraFromPlayer());
         animator.SetBool("isDying", true);
