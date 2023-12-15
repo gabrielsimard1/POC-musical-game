@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
@@ -25,6 +26,11 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] float aggroMoveSpeed = 5f;
     [SerializeField] float returnToSpawnSpeed = 6f;
     [SerializeField, Range(0, 1)] float submergedMoveSpeedReduceCoef = 0.5f;
+    
+    [Header("Knockback")]
+    [SerializeField, Min(0), Tooltip("Time between hit and the moment we check if it has hit the ground or reached end of knockback.")] float knockbackYeetTime = .5f;
+    [SerializeField, Min(0), Tooltip("Time to wait until resume activity, after end of knockback.")] float knockbackDownTime = .5f;
+    [SerializeField, Min(0), Tooltip("*Ground Enemies Only*\nY-axis propulsion for knockback.")] float yAxisKnockBack = 1f;
 
     EnemyJump enemyJump;
     Vector2 spawnPos;
@@ -35,6 +41,7 @@ public class EnemyMovement : MonoBehaviour
     float distToPlayer;
     const float distanceTolerance = 0.2f;
     float directionTowardsPlayer = 0f;
+    bool canMove = true;
 
     bool canFlip = true;
     const float flipCooldown = 0.3f;
@@ -97,7 +104,8 @@ public class EnemyMovement : MonoBehaviour
     void FixedUpdate()
     {
         UpdateDistances();
-        CurrentAction();
+        if (canMove)
+            CurrentAction();
     }
 
     void FlipCooldown()
@@ -205,5 +213,31 @@ public class EnemyMovement : MonoBehaviour
             if (!isChasing)
                 enemyJump.JumpOnImminentCollision(Mathf.Sign(speed));
         }
+    }
+     
+    public IEnumerator KnockBack(float direction, float knockbackForce)
+    {
+        if (knockbackForce > 0)
+        {
+            canMove = false;
+            myRigidbody.velocity = CalculateKnockbackOrientation(direction) * knockbackForce;
+            yield return new WaitForSeconds(knockbackYeetTime);
+            if (!isFlying)
+                yield return new WaitUntil(() => IsGrounded);
+            myRigidbody.velocity = Vector3.zero;
+            if (!canChase && distToSpawnPos > aggroRange) // if we knockback a passive enemy past aggroRange, change their patrol route
+                spawnPos = transform.position;
+            yield return new WaitForSeconds(knockbackDownTime);
+            canMove = true;
+        }
+    }
+
+    Vector2 CalculateKnockbackOrientation(float direction)
+    {
+        Vector2 knockbackDirection = new Vector2(Mathf.Sign(direction), IsGrounded ? yAxisKnockBack : 0);
+        if (verticalPatrol)
+            knockbackDirection = new Vector2(0, Mathf.Sign(direction));
+
+        return knockbackDirection;
     }
 }

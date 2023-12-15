@@ -10,7 +10,7 @@ public class EnemyJump : MonoBehaviour
     [Header("Jump Variables")]
     [SerializeField] float jumpHeight = 15f;
 
-    HashSet<string> playerTags = new() { "Player", "PlayerFeet" };
+    HashSet<string> playerTags = new() { Tags.PLAYER_TAG, Tags.PLAYER_FEET_TAG };
 
     EnemyMovement enemyMovement;
     Transform playerTransform;
@@ -42,7 +42,7 @@ public class EnemyJump : MonoBehaviour
 
     bool CollidesWithWall(RaycastHit2D hit)
     {
-        return hit.collider.gameObject.CompareTag("Ground");
+        return hit.collider.gameObject.CompareTag(Tags.GROUND_TAG);
     }
 
     public void JumpToPlayer()
@@ -92,7 +92,7 @@ public class EnemyJump : MonoBehaviour
         Vector2 castOffset = new(direction * 0.1f, 0);
         RaycastHit2D hitAbove = Physics2D.Raycast(hitPoint + castOffset, Vector2.up, LayerMask.GetMask("Ground"));
 
-        while (hitAbove.collider != null && hitAbove.collider.CompareTag("Ground"))
+        while (hitAbove.collider != null && hitAbove.collider.CompareTag(Tags.GROUND_TAG))
         {
             // Move the raycast upward
             hitPoint = hitAbove.point + Vector2.up * 0.1f + castOffset;

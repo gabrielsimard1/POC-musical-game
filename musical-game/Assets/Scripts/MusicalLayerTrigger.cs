@@ -21,7 +21,7 @@ public class MusicalLayerTrigger : MonoBehaviour
     // at some point if we want to put horizontal triggers we might need to add a [SerializeField] bool to specify so and then we can adjust the logic (checking the velocity.y instead of x)
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (gameObject.tag.Contains(LAYER_TRIGGER_PREFIX) && collision.CompareTag("Player"))
+        if (gameObject.tag.Contains(LAYER_TRIGGER_PREFIX) && collision.CompareTag(Tags.PLAYER_TAG))
         {
             Rigidbody2D playersRigidBody = collision.GetComponent<Rigidbody2D>();
             if (playersRigidBody)

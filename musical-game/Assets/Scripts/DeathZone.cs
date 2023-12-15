@@ -8,7 +8,7 @@ public class DeathZone : MonoBehaviour
     {
         Health playerHealth = collision.gameObject.GetComponent<Health>();
 
-        if (collision.CompareTag("Player") && playerHealth)
+        if (collision.CompareTag(Tags.PLAYER_TAG) && playerHealth)
         {
             playerHealth.Die();
             playerHealth.GetHealthBar().SetHealthBarValue(0);
