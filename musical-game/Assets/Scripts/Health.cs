@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Health : MonoBehaviour
 {
     [SerializeField] int maxHealth = 100;
     [SerializeField] HealthBar healthBar;
     [SerializeField] int invulnerabilityTime = 3;
+    [SerializeField] GameObject deadGhostPrefab;
 
 
     float blinkInterval = .1f;
@@ -97,6 +99,7 @@ public class Health : MonoBehaviour
         currentHealth = 0;
         StartCoroutine(playerMovement.DetachCameraFromPlayer());
         animator.SetBool("isDying", true);
+        Instantiate(deadGhostPrefab, transform.position, Quaternion.identity, gameObject.transform);
         GameSession.Instance.ReloadScene();
     }
 
